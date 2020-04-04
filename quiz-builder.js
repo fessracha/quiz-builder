@@ -1,4 +1,4 @@
-class QuizBuilder {
+class XQuiz {
   constructor(options) {
     this.name = options.name;
     this.description = options.description;
@@ -13,23 +13,46 @@ class QuizBuilder {
     this.buildBase();
   }
 
-  setHead(html) {
-    const $head = document.querySelector(".x-quiz__head");
-
-    $head.innerHTML(html);
-  }
-
-  setBody(html) {
-    console.log("set body");
+  buildBody() {
     const $body = document.querySelector(".x-quiz__body");
+
+    let html = `<div class="x-quiz__question">
+                    ${this.questions[this.current_question].question}
+                </div>`;
 
     $body.innerHTML = html;
   }
 
-  setActions(html) {
+  buildActions() {
     const $actions = document.querySelector(".x-quiz__actions");
 
+    let html = `<button class="btn btn-primary mr-2" id="x-quiz-prev">Prev</button><button class="btn btn-primary mr-2" id="x-quiz-next">Next</button>`;
+
     $actions.innerHTML = html;
+  }
+
+  buildOptions() {
+    const $options = document.querySelector(".x-quiz__options");
+
+    let html = "";
+
+    if (this.questions[this.current_question].type == 0) {
+      this.questions[this.current_question].options.forEach((option, i) => {
+        html += `
+        <input type="radio" id="option-${i}"
+        name="question-${this.current_question}" value="${this.current_question}">
+        <label for="option-${i}">${option.text}</label>`;
+      });
+    } else if (this.questions[this.current_question].type == 1) {
+      this.questions[this.current_question].options.forEach((option, i) => {
+        html += `<input id="option-${i}" type="checkbox" name="question-${this.current_question}" value="${i}">
+        <label for="option-${i}">${option.text}</label>`;
+      });
+    } else if (this.questions[this.current_question].type == 2) {
+      html += `<input type="text" name="question-${this.current_question}">`;
+    }
+
+    $options.innerHTML = html;
   }
 
   buildBase() {
@@ -45,6 +68,8 @@ class QuizBuilder {
                         ${this.description}
                     </div>
                 </div>
+                <div class="x-quiz__options"></div>
+                <hr>
                 <div class="x-quiz__actions mt-4">
                     <button class="btn btn-primary" id="x-quiz-start">Start</button>
                 </div>
@@ -61,15 +86,11 @@ class QuizBuilder {
   start() {
     console.log("Start Quiz");
 
-    this.setBody(
-      `<div class="x-quiz__question">
-                    ${this.questions[this.current_question].question}
-                </div>`
-    );
+    this.buildBody();
 
-    this.setActions(
-      `<button class="btn btn-primary mr-2" id="x-quiz-prev">Prev</button><button class="btn btn-primary mr-2" id="x-quiz-next">Next</button>`
-    );
+    this.buildOptions();
+
+    this.buildActions();
 
     const $next = document.getElementById("x-quiz-next");
     const $prev = document.getElementById("x-quiz-prev");
@@ -79,16 +100,12 @@ class QuizBuilder {
   }
 
   next() {
-    console.log(this.current_question);
-    console.log(this.questions.length);
     if (this.current_question < this.questions.length - 1) {
       this.current_question++;
 
-      this.setBody(
-        `<div class="x-quiz__question">
-                    ${this.questions[this.current_question].question}
-                </div>`
-      );
+      this.buildBody();
+
+      this.buildOptions();
     }
     console.log("next");
   }
@@ -97,11 +114,9 @@ class QuizBuilder {
     if (this.current_question > 0) {
       this.current_question--;
 
-      this.setBody(
-        `<div class="x-quiz__question">
-                    ${this.questions[this.current_question].question}
-                </div>`
-      );
+      this.buildBody();
+
+      this.buildOptions();
     }
     console.log("prev");
   }
