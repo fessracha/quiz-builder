@@ -14,12 +14,14 @@ let options = {
   questions: [
     {
       type: 0,
+      required: true,
       question: "COVID-19 передается воздушно капельным путем",
       hint: "",
       options: [{ text: "Правда" }, { text: "Ложь" }],
     },
     {
       type: 1,
+      required: true,
       question: "Лучшие способы защиты от COVID-19",
       hint: "",
       options: [
@@ -30,6 +32,7 @@ let options = {
     },
     {
       type: 2,
+      required: true,
       question: "COVID-19 принадлежит к семейству ...",
       hint: "",
     },
